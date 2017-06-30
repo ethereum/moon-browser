@@ -1,0 +1,4 @@
+node_modules/
+stuff/
+.DS_Store
+*.min.js*

@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <title>App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      * {
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+      }
+      html {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        height: 100%;
+        background-color: rgb(241,241,241);
+        background-repeat: repeat;
+        background-attachment: fixed;
+        background-position: center;
+        background-size: 1400px;
+        overflow: hidden;
+      }
+      #main {
+        height: 100%;
+        display: block;
+      }
+      textarea, input, button, pre, span {
+        outline: none;
+      }
+      input {
+        border: none;
+        background: transparent;
+      }
+      .selectable {
+        -webkit-touch-callout: text;
+        -webkit-user-select: text;
+        -khtml-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+      .unselectable {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body spellcheck="false">
+    <script src="index.min.js"></script>
+    <div id="main"></div>
+  </body>
+</html>
