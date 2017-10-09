@@ -5,8 +5,10 @@ setInterval(() => window.SEED = 0, 100);
 const Inferno = require("inferno");
 const Moon = require("moon-lang")();
 
+let fetchInterval = null; // TODO: bad
+
 module.exports = (term, path, size, appState, accounts, performIO, debug) => {
-  
+
   const render = (term, env) => {
     if (typeof term === "string" || typeof term === "number") {
       return term;
@@ -17,16 +19,21 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
     } else if (term === null) {
       return null;
 
-    } else if (typeof term === "object" && term.length) {
+    } else if (typeof term === "object" && term.length !== undefined) {
       return [].map.call(term, child => render(child, env));
 
     } else if (typeof term === "object") {
+      //if (term.value === undefined) {
+        //throw "Not renderable.";
+      //}
+
       const O = {};
-      const box = term.box || {};
       const pos = term.pos || [0,0];
       const size = term.size || env.size;
 
-      let newEnv = {};
+      let newEnv = {
+        address: accounts[0].address // only 1 account for now
+      };
 
       for (let key in env) {
         newEnv[key] = env[key];
@@ -46,9 +53,9 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
         newEnv.size = [term.size[0], term.size[1]];
       }
 
-      if (box && box.borders) {
-        newEnv.size[0] -= (((box.borders||O).left||O).size||0) + (((box.borders||O).right||O).size||0);
-        newEnv.size[1] -= (((box.borders||O).top||O).size||0) + (((box.borders||O).bottom||O).size||0);
+      if (term.borders) {
+        newEnv.size[0] -= (((term.borders||O).left||O).size||0) + (((term.borders||O).right||O).size||0);
+        newEnv.size[1] -= (((term.borders||O).top||O).size||0) + (((term.borders||O).bottom||O).size||0);
       }
 
       if (term.set) {
@@ -57,16 +64,21 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
         }
       }
 
-      if (term.params) {
-        for (let key in term.params) {
+      if (term.args) {
+        for (let key in term.args) {
           if (newEnv[key] === undefined) {
-            newEnv[key] = term.params[key];
+            newEnv[key] = term.args[key];
           }
         }
       }
 
-      if (term.hear) {
-        newEnv.yell = word => performIO(term.hear(word), env.path, env.yell);
+      if (term.onHear) {
+        newEnv.yell = word => performIO(term.onHear(word), env.path, env.yell);
+      }
+
+      if (term.onFetch) {
+        if (fetchInterval) clearInterval(fetchInterval);
+        fetchInterval = setInterval(() => performIO(term.onFetch, env.path, env.yell), 1000);
       }
 
       const value = render(term.value, newEnv);
@@ -79,8 +91,8 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
         : null;
 
       const makeEvent = (bind, key) => ev => {
-        if (box[key]) {
-          performIO(bind(ev, box[key]), env.path, env.yell);
+        if (term[key]) {
+          performIO(bind(ev, term[key]), env.path, env.yell);
           ev.stopPropagation();
         }
       };
@@ -91,19 +103,21 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
         text: e.target.value
       });
 
-      const textShadow = (box.text||O).shadow
-        ? ( box.text.shadow.pos[0] + "px "
-          + box.text.shadow.pos[1] + "px "
-          + box.text.shadow.blur + "px "
-          + box.text.shadow.color)
+      const textShadow = (term.font||O).shadow
+        ? ( term.font.shadow.pos[0] + "px "
+          + term.font.shadow.pos[1] + "px "
+          + term.font.shadow.blur + "px "
+          + term.font.shadow.color)
         : null;
 
       return Inferno.createVNode(2, 
-        box.input ? "input" : "div",
-        box.selectable ? "selectable" : "unselectable",
-        box.input ? null : value,
+        term.input ? "input" : "div",
+        term.selectable ? "selectable" : "unselectable",
+        term.input ? null : value,
         {
-          value: box.input ? value : null,
+          value: term.input ? value : null,
+          type: term.input ? term.type : null,
+          disabled: term.input && term.disabled ? true : false,
           style: {
             position: "absolute",
             left: pos[0] + "px",
@@ -111,28 +125,28 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
             width: size[0] + "px",
             height: size[1] + "px",
             lineHeight: size[1] + "px",
-            cursor: box.cursor,
+            cursor: term.cursor,
             overflow: "hidden",
             outline: "none",
-            fontSize: ((box.text||O).size || (size[1] * 0.9 || 0)) + "px",
-            fontFamily: (box.text||O).font || null,
-            fontWeight: (box.text||O).weight || null,
-            fontStyle: (box.text||O).style || null,
-            textAlign: (box.text||O).align || null,
+            fontSize: ((term.font||O).size || (size[1] * 0.9 || 0)) + "px",
+            fontFamily: (term.font||O).family || null,
+            fontWeight: (term.font||O).weight || null,
+            fontStyle: (term.font||O).style || null,
+            textAlign: (term.font||O).align || null,
             textShadow: textShadow,
-            color: (box.text||O).color || null,
-            paddingTop: ((box.paddings||O).top||0)+"px",
-            paddingRight: ((box.paddings||O).right||0)+"px",
-            paddingBottom: ((box.paddings||O).bottom||0)+"px",
-            paddingLeft: ((box.paddings||O).left||0)+"px",
-            borderTop: renderBorder((box.borders||O).top),
-            borderRight: renderBorder((box.borders||O).right),
-            borderBottom: renderBorder((box.borders||O).bottom),
-            borderLeft: renderBorder((box.borders||O).left),
-            borderRadius: box.radius ? box.radius+"px" : null,
+            color: (term.font||O).color || null,
+            paddingTop: ((term.paddings||O).top||0)+"px",
+            paddingRight: ((term.paddings||O).right||0)+"px",
+            paddingBottom: ((term.paddings||O).bottom||0)+"px",
+            paddingLeft: ((term.paddings||O).left||0)+"px",
+            borderTop: renderBorder((term.borders||O).top),
+            borderRight: renderBorder((term.borders||O).right),
+            borderBottom: renderBorder((term.borders||O).bottom),
+            borderLeft: renderBorder((term.borders||O).left),
+            borderRadius: term.radius ? term.radius+"px" : null,
             background: debug
               ? "rgb("+(200+RNG(55))+","+(200+RNG(55))+","+(200+RNG(55))+")"
-              : box.background
+              : term.background
           },
           onKeyPress: makeEvent(key, "onKeyPress"),
           onKeyUp: makeEvent(key, "onKeyUp"),
@@ -145,10 +159,15 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       return "<?>";
     }
   }
-  return render(term, {
-    path: path,
-    size: size,
-    yell: w => performIO(d => e => e(0)),
-    accounts: accounts
-  });
+
+  try {
+    return render(term, {
+      path: path,
+      size: size,
+      yell: _ => performIO(do_ => do_("stop")),
+      accounts: accounts
+    });
+  } catch (e) {
+    return "Not renderable.";
+  };
 };

@@ -17,11 +17,12 @@
   "license": "",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "eth-lib": "^0.1.27",
+    "eth-lib": "^0.2.3",
     "incompose": "0.0.15",
     "inferno": "^3.7.0",
     "inferno-create-class": "^3.7.1",
-    "moon-lang": "^0.2.10"
+    "moon-lang": "^0.2.29",
+    "xhr-request-promise": "^0.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

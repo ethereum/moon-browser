@@ -1,0 +1,6 @@
+{
+  "ethereum": {
+    "mainnet": "https://mainnet.infura.io/sE0I5J1gO2jugs9LndHR"
+  },
+  "ipfs": "https://ipfs.infura.io:5001"
+}

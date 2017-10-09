@@ -3,12 +3,13 @@
   <head>
     <title>App</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <style>
       * {
         padding: 0px;
         margin: 0px;
         box-sizing: border-box;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
       }
       html {
         height: 100%;
@@ -41,7 +42,7 @@
         -moz-user-select: text;
         -ms-user-select: text;
         user-select: text;
-      }
+    }
       .unselectable {
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -52,7 +53,7 @@
       }
     </style>
   </head>
-  <body spellcheck="false">
+  <body spellcheck="false" scroll="no">
     <script src="index.min.js"></script>
     <div id="main"></div>
   </body>

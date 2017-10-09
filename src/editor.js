@@ -1,5 +1,3 @@
-//228a26150874e0ea034fc646b1256035dcb613bff626d4e01f03205ae93f3aca
-
 const Inferno = require("inferno");
 const createClass = require("inferno-create-class");
 const Moon = require("moon-lang");
@@ -14,14 +12,13 @@ module.exports = createClass({
     }
   },
   componentDidMount() {
-    this.renderCode(true);
+    this.renderCode();
   },
-  //componentDidUpdate() {
-    //this.refresh(false);
-  //},
   componentWillReceiveProps(nextProps) {
-    this.setState({code: nextProps.code, editing: false});
-    this.renderCode(true);
+    if (this.state.code === nextProps.code && window.getSelection().anchorOffset === 0) {
+      this.setState({code: nextProps.code, editing: false});
+      this.renderCode();
+    }
   },
   shouldComponentUpdate() {
     return false;
@@ -38,11 +35,15 @@ module.exports = createClass({
   stopEditing() {
     this.props.onChange(this.state.code);
   },
-  renderCode(firstCall) {
+  renderCode() {
+    //console.log("render", this.state.stale);
+    //if (!this.state.stale) {
+      //return;
+    //}
     try {
       var formatTerm = (term, black) => {
         var repeat = (n, s) =>
-          n === 0 ? "" : s + repeat(n-1, s);
+          n === 0 ? "" : s + repeat(n-1, s);
         var dec = (col, underline, val) =>
           black
             ? (typeof val === "string" ? val : val.join(""))
@@ -86,14 +87,14 @@ module.exports = createClass({
       }
 
       this.colorTree = formatTerm(term, false);
-      this.colorTree.style.height = (window.innerHeight - 38)+"px";
+      this.colorTree.style.height = (window.innerHeight - 70)+"px";
       this.colorTree.style.overflow = "scroll";
       this.colorTree.style.paddingRight = "32px";
       this.blackTree = formatTerm(term, true);
       this.blackTree.style["-webkit-text-fill-color"] = "transparent";
       this.blackTree.style.paddingRight = "32px";
       this.blackTree.style.overflow = "scroll";
-      this.blackTree.style.height = (window.innerHeight - 38)+"px";
+      this.blackTree.style.height = (window.innerHeight - 70)+"px";
       this.blackTree.contentEditable = true;
       this.blackTree.onblur = e => setTimeout(() => this.stopEditing(), 1);
       this.blackTree.onscroll = e => this.colorTree.scrollTop = e.target.scrollTop;
@@ -101,20 +102,8 @@ module.exports = createClass({
       this.element.appendChild(this.colorTree);
       this.element.appendChild(this.blackTree);
 
-      if (!firstCall) {
-        var range = document.createRange();
-        var sel = window.getSelection();
-        var node = this.blackTree.childNodes[0].childNodes[0];
-        var pos = Math.min(this.state.caretPosition, node.length);
-        range.setStart(node, pos);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        this.blackTree.focus();
-      }
     } catch (e) {
-      console.log(e);
-      // no parse, no update
+      console.log(e); // no parse, no update
     }
   },
   render() {
@@ -122,7 +111,7 @@ module.exports = createClass({
       position="relative"
       ref={e => this.element = e}
       style={{
-        padding: "4px",
+        padding: "0px",
         fontFamily:'"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace"'}}
       onKeyDown={e => {
         if (e.keyCode === 13) { // enter
@@ -143,5 +132,3 @@ module.exports = createClass({
     </pre>;
   }
 });
-
-
