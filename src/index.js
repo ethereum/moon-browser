@@ -21,7 +21,7 @@ const Home = createClass({
     this.activeAppInfoNonce = 0;
     this.localDataKey = "mist-lite-data";
     this.moonApp = "zb2rhi7fsdeKtAvGi1seH73xykAp6A9DJ2FJdV96vnWg5iqib";
-    this.accountsApp = "zb2rhZfPHBBEj4MQBAT36aPPuqya93dWEkwrXYdDMYz6Fo3xB";
+    this.walletApp = "zb2rhjFFqQBdRjF8FJ5rGfR1BDB1pXmuY7MaJL5Wo6cPiGtAZ";
 
     window.acc = pvt => { 
       const acc = Eth.account.fromPrivate(pvt);
@@ -133,23 +133,33 @@ const Home = createClass({
   },
 
   setActiveApp(name) {
-    Moon.load(name).then(code => {
-      if (this.activeAppInfo.code !== code) {
-        this.state.activeAppHistory.push(name);
-      }
-      const newState = merge(this.state, {activeAppHistory: this.state.activeAppHistory});
-      const activeApp = this.getActiveApp(newState);
-      const invalid = () => ({type:"txt", value:"<invalid-term>"});
-      const term = Moon.imports(activeApp).then(Moon.parse).catch(invalid);
-      const nonce = this.activeAppInfoNonce++;
-      return term.then(term => {
-        if (nonce + 1 === this.activeAppInfoNonce) { // avoids front running
-          this.activeAppInfo = {code, term};
-          this.setState(newState);
-          this.forceUpdate();
+    if (name !== this.getActiveApp()) {
+      console.log("-> Setting active app to: " + name);
+      Moon.load(name).then(code => {
+        console.log("-> Loaded code. Importing dependencies.");
+        if (this.activeAppInfo.code !== code) {
+          this.state.activeAppHistory.push(name);
         }
-      });
-    }).catch(()=>{});
+        const newState = merge(this.state, {activeAppHistory: this.state.activeAppHistory});
+        const activeApp = this.getActiveApp(newState);
+        const invalid = () => ({type:"txt", value:"<invalid-term>"});
+        const term = Moon.imports(activeApp)
+          .then(imported => {
+            console.log("-> Imported " + imported.length + " chars. Parsing...");
+            return Moon.parse(imported, {fast:1});
+          })
+          .catch(invalid);
+        const nonce = this.activeAppInfoNonce++;
+        return term.then(term => {
+          console.log("-> Code parsed. Initializing DApp...");
+          if (nonce + 1 === this.activeAppInfoNonce) { // avoids front running
+            this.activeAppInfo = {code, term};
+            this.setState(newState);
+            this.forceUpdate();
+          }
+        });
+      }).catch(()=>{});
+    };
   },
 
   setActiveCode(code) {

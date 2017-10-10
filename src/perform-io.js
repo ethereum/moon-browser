@@ -39,8 +39,6 @@ module.exports = (self, program, path, yell) => {
         case "eth_sendTransaction":
           var account = self.getActiveAccount();
 
-          //console.log(arg);
-
           // Gets user authorization
           if (!confirm("Send " + Eth.nat.toEther(params[0].value || "0x0") + " eth?")) {
             return Promise.resolve("Denied.");
@@ -55,9 +53,6 @@ module.exports = (self, program, path, yell) => {
             gas: "0x106a0", // TODO: remove
             value: params[0].value || "0x0"
           };
-          //0xec869ea20f794d280881a8a5c0e35afc2eedfcde
-
-          console.log(tx);
 
           return Eth.transaction.addDefaults(rpc, tx)
             .then(tx => (console.log("tx:",JSON.stringify(tx,null,2)), tx))

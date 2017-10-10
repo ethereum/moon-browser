@@ -161,6 +161,9 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
   }
 
   try {
+    if (typeof term !== "object" || !term.name) {
+      throw "";
+    };
     return render(term, {
       path: path,
       size: size,
