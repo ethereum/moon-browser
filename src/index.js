@@ -8,10 +8,69 @@ const Editor = require("./editor");
 const createClass = require("inferno-create-class");
 const renderTerm = require("./render-term");
 const {merge, memoizeAsync, zipWith} = require("./utils");
+const Blockies = require("./blockies");
 
 // Temporary hack for debugging
 window.reset = () => window.localStorage.removeItem("mist-lite-data");
 
+// Todo: 1. finish, 2. move it to other file
+const AccountList = createClass({
+  render() {
+    return <div
+      style={{
+        position: "fixed",
+        top: "70px",
+        right: "0px",
+        zIndex: 2,
+        width: "420px",
+        paddingLeft: "18px",
+        background: "rgb(241,241,241)",
+        border: "1px solid rgb(227,227,227)",
+        boxShadow: "0px 0px 1px rgb(99,99,99)"
+      }}>
+      <div>
+        Select your profile
+      </div>
+      <div>{
+        this.props.accounts.map(account => {
+          return <div style={{
+            height: "32px",
+            margin: "7px 0px"
+            }}>
+            <div style={{
+              display:"inline-block",
+              overflow: "hidden",
+              verticalAlign: "middle",
+              borderRadius: "16px"
+              }}>
+              <Blockies address={account.address} width={32}/>
+            </div>
+            <div style={{
+              fontFamily: "monospace",
+              fontSize: "14px",
+              display: "inline-block",
+              marginLeft: "4px",
+              verticalAlign: "middle"
+              }}>
+              {account.address}
+            </div>
+          </div>
+        })
+      }</div>
+      <div
+        style={{
+          cursor: "pointer",
+          fontFamily: "helvetica",
+          fontSize: "18px",
+          color: "rgb(92,149,219)"
+        }}>
+        Create/import account
+      </div>
+    </div>;
+  }
+});
+
+// Todo: break into smaller components
 const Home = createClass({
 
   // Lifecycle
@@ -20,8 +79,7 @@ const Home = createClass({
     this.activeAppInfo = {};
     this.activeAppInfoNonce = 0;
     this.localDataKey = "mist-lite-data";
-    this.moonApp = "zb2rhi7fsdeKtAvGi1seH73xykAp6A9DJ2FJdV96vnWg5iqib";
-    this.walletApp = "zb2rhjFFqQBdRjF8FJ5rGfR1BDB1pXmuY7MaJL5Wo6cPiGtAZ";
+    this.homeAppCid = "zb2rhi7fsdeKtAvGi1seH73xykAp6A9DJ2FJdV96vnWg5iqib";
 
     window.acc = pvt => { 
       const acc = Eth.account.fromPrivate(pvt);
@@ -36,8 +94,9 @@ const Home = createClass({
     return localData || (() => {
       const firstAccount = Eth.account.create();
       return {
-        activeAppHistory: [this.moonApp],
+        activeAppHistory: [this.homeAppCid],
         appState: {},
+        showAccountList: false,
         mode: "play",
         debug: false,
         activeAccount: firstAccount.address,
@@ -191,8 +250,12 @@ const Home = createClass({
     this.setState({mode:({play:"edit",edit:"play"})[this.state.mode]});
   },
 
+  toggleShowAccountList() {
+    this.setState({showAccountList: !this.state.showAccountList});
+  },
+
   toggleDebug() {
-    this.setState({debug:!this.state.debug});
+    this.setState({debug: !this.state.debug});
   },
 
   renderApp({code, term, state}) {
@@ -308,28 +371,48 @@ const Home = createClass({
           fontSize: "14px",
           float: align
         }}
-        onClick={onClick || (()=>{})}>
-      <img
-        src={"images/"+icon+"@2x.png"}
-        width="30px"
-        style={{
-          display: "inline-block",
-          verticalAlign: "bottom",
-          paddingBottom: "6px"
-        }}/>
+        onClick={(e) => { onClick(e); e.stopPropagation() }}>
+      {typeof icon === "string"
+        ?  <img
+          src={"images/"+icon+"@2x.png"}
+          width="30px"
+          style={{
+            display: "inline-block",
+            verticalAlign: "bottom",
+            paddingBottom: "6px"
+          }}/>
+        : icon}
       </span>;
 
     // Tabs button
-    const tabsButton = Button("left", "tabs-open", e => (this.gotabs(), e.stopPropagation()));
+    const tabsButton = Button("left", "tabs-open", () => this.gotabs());
 
     // Button to go back
-    const backButton = Button("left", "back", e => (this.goBack(), e.stopPropagation()));
+    const backButton = Button("left", "back", () => this.goBack());
 
     // Button to edit and play the app
-    const editButton = Button("right", "edit", e => (this.toggleMode(), e.stopPropagation()));
+    const editButton = Button("right", "edit", () => this.toggleMode());
 
     // The user avatar box 
-    const userAvatar = Button("right", "edit", e => (this.setActiveApp(this.accountsApp), e.stopPropagation()));
+    const userBlockies = <div
+      style={{
+        position:"relative",
+        //border: "2px solid black",
+        width: "24px",
+        height: "24px",
+        marginTop: "36px",
+        marginLeft: "6px",
+        //width: "24px",
+        //height: "24px",
+        overflow: "hidden",
+        borderRadius:"12px"
+        }}>
+      <Blockies address={this.getActiveAccount().address} width={24}/>
+    </div>;
+    const userAvatar = Button("right", userBlockies, e => this.toggleShowAccountList());
+
+    // Account list
+    const accountList = <AccountList accounts={this.getPublicAccounts()}/>;
 
     // The top bar itself
     const topBarStyle = {
@@ -345,9 +428,9 @@ const Home = createClass({
       {tabsButton}
       {backButton}
       {titleUrl}
+      {userAvatar}
       {editButton}
     </div>;
-      //{userAvatar}
 
     // Contents, where the app/editor is displayed
     const contents = <div 
@@ -363,6 +446,7 @@ const Home = createClass({
     // The site itself
     return <div style={{width:"100%",height:"100%"}}>
       {topBar}
+      {this.state.showAccountList ? accountList : null}
       {contents}
     </div>;
   }

@@ -32,7 +32,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       const size = term.size || env.size;
 
       let newEnv = {
-        address: accounts[0].address // only 1 account for now
+        address: accounts[0] && accounts[0].address || "0x" // only 1 account for now
       };
 
       for (let key in env) {
@@ -161,9 +161,6 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
   }
 
   try {
-    if (typeof term !== "object" || !term.name) {
-      throw "";
-    };
     return render(term, {
       path: path,
       size: size,
@@ -171,6 +168,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       accounts: accounts
     });
   } catch (e) {
+    console.log(e);
     return "Not renderable.";
   };
 };
