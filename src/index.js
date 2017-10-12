@@ -13,57 +13,59 @@ const Blockies = require("./blockies");
 // Temporary hack for debugging
 window.reset = () => window.localStorage.removeItem("mist-lite-data");
 
-// Todo: 1. finish, 2. move it to other file
+// Todo: Fix this horrible inline shit
 const AccountList = createClass({
   render() {
-    return <div
-      style={{
-        position: "fixed",
-        top: "70px",
-        right: "0px",
-        zIndex: 2,
-        width: "420px",
-        paddingLeft: "18px",
-        background: "rgb(241,241,241)",
-        border: "1px solid rgb(227,227,227)",
-        boxShadow: "0px 0px 1px rgb(99,99,99)"
-      }}>
-      <div>
+    return <div className="floater accounts" style={{top:"70px", right:"10px", height:"160px"}}>
+      <div className="title" style={{
+          textTransform:"uppercase",
+          fontSize:"15px",
+          fontWeight:"600",
+          color:"#4A4A4A",
+          height:"36.8px",
+          top:"4px",
+          position:"relative"}}>
         Select your profile
       </div>
       <div>{
         this.props.accounts.map(account => {
-          return <div style={{
-            height: "32px",
-            margin: "7px 0px"
-            }}>
+          return <div>
             <div style={{
-              display:"inline-block",
-              overflow: "hidden",
-              verticalAlign: "middle",
-              borderRadius: "16px"
-              }}>
+              position:"absolute",
+              left:"17px",
+              top:"48px",
+              width:"32px",
+              height:"32px",
+              borderRadius:"16px"
+            }}>
               <Blockies address={account.address} width={32}/>
             </div>
             <div style={{
-              fontFamily: "monospace",
-              fontSize: "14px",
-              display: "inline-block",
-              marginLeft: "4px",
-              verticalAlign: "middle"
-              }}>
+              position:"absolute",
+              left:"59px",
+              top:"54px",
+              color:"#4A90E2",
+              fontWeight:"300",
+              overflow:"hidden",
+              textOverflow:"ellipsis",
+              width:"350px",
+              fontSize:"16px",
+              letterSpacing:"0.7px"}}>
               {account.address}
             </div>
           </div>
         })
       }</div>
-      <div
-        style={{
-          cursor: "pointer",
-          fontFamily: "helvetica",
-          fontSize: "18px",
-          color: "rgb(92,149,219)"
-        }}>
+      <div style={{
+          position:"absolute",
+          top:"100px",
+          textAlign:"center",
+          textTransform:"uppercase",
+          fontWeight:"600",
+          color:"#4A90E2",
+          width:"380px",
+          borderTop:"solid 1px rgba(204,188,189,.4)",
+          paddingTop:"18.4px"}}>
         Create/import account
       </div>
     </div>;
@@ -74,14 +76,14 @@ const AccountList = createClass({
 const Home = createClass({
 
   // Lifecycle
-  
+
   getInitialState() {
     this.activeAppInfo = {};
     this.activeAppInfoNonce = 0;
     this.localDataKey = "mist-lite-data";
     this.homeAppCid = "zb2rhi7fsdeKtAvGi1seH73xykAp6A9DJ2FJdV96vnWg5iqib";
 
-    window.acc = pvt => { 
+    window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
       this.setState({
         activeAccount: acc.address,
@@ -176,7 +178,7 @@ const Home = createClass({
   },
 
   getAccountBalance(account) {
-    return account.balance ? Eth.nat.toEther(account.balance) : 0; 
+    return account.balance ? Eth.nat.toEther(account.balance) : 0;
   },
 
   getAccountBalanceString(account) {
@@ -274,7 +276,7 @@ const Home = createClass({
 
     } else {
       const {width, height} = this.mainport.getBoundingClientRect();
-      return <div style={{position:"relative"}}>
+      return <div className="renderedApp" style={{position:"relative", height:"100%", width:"100%"}}>
         {renderTerm(
           term,
           [],
@@ -295,7 +297,7 @@ const Home = createClass({
 
 
   // Render
-   
+
   render() {
     if (!this.state) {
       return <div>Loading...</div>;
@@ -307,8 +309,8 @@ const Home = createClass({
 
     // The DApp title
     const title = <span style={{
-      fontSize: "12px",
-      fontWeight: "bold",
+      fontSize: "14px",
+      fontWeight: "600",
       fontFamily: "helvetica",
       color: "rgb(108,108,108)"}}>
       Welcome to Moon!
@@ -322,20 +324,21 @@ const Home = createClass({
       spellcheck="false"
       style={{
         display: "inline-block",
-        verticalAlign: "top",
         border: "0px solid white",
-        background: "rgba(0,0,0,0)",
-        color: "rgb(167,167,167)",
+        color: "#4A90E2",
+        opacity: "0.5",
         margin: "0px 4px",
         padding: "4px",
         width: "366px",
         height: "24px",
         fontSize: "12px",
-        fontFamily: "monospace"
+        textAlign: "center",
+        fontWeight: "300"
+        // fontFamily: "monospace"
       }}
       onInput={e => this.setActiveApp(e.target.value)}
       value={this.getActiveApp()}/>;
-      
+
     // The (...) options for the app
     //const optionsButtonStyle = {
       //fontSize: "18px",
@@ -360,48 +363,53 @@ const Home = createClass({
     // Component for a top-bar button
     const Button = (align, icon, onClick) =>
       <span
-        className="unselectable"
+        className="button unselectable"
         style={{
           display: "inline-block",
+          position: "relative",
           cursor: "pointer",
-          verticalAlign: "top",
           width: "32px",
           height: "70px",
-          lineHeight: "70px",
           fontSize: "14px",
-          float: align
+          float: align,
+          fontFamily: "icomoon"
         }}
         onClick={(e) => { onClick(e); e.stopPropagation() }}>
       {typeof icon === "string"
-        ?  <img
-          src={"images/"+icon+"@2x.png"}
-          width="30px"
+        ?  <div
           style={{
             display: "inline-block",
-            verticalAlign: "bottom",
-            paddingBottom: "6px"
-          }}/>
+            position: "absolute",
+            left: "0px",
+            top: "30px",
+            width:"30px",
+            fontSize: "24px",
+            color: "#4A90E2"
+          }}> {icon} </div>
         : icon}
       </span>;
 
+      // other ways to add this: &#xe90e; {{icon}} &#x{{icon}}
+
     // Tabs button
-    const tabsButton = Button("left", "tabs-open", () => this.gotabs());
+    const tabsButton = Button("left", "", () => this.gotabs());
 
     // Button to go back
-    const backButton = Button("left", "back", () => this.goBack());
+    const backButton = Button("left", "", () => this.goBack());
 
     // Button to edit and play the app
-    const editButton = Button("right", "edit", () => this.toggleMode());
+    const editButton = Button("right", "", () => this.toggleMode());
 
-    // The user avatar box 
-    const userBlockies = <div
+    // The user avatar box
+    const userBlockies = <div className="blockies"
       style={{
         position:"relative",
         //border: "2px solid black",
         width: "24px",
         height: "24px",
-        marginTop: "36px",
-        marginLeft: "6px",
+        top: "32px",
+        left: "0",
+        background: "#b7a8a8",
         //width: "24px",
         //height: "24px",
         overflow: "hidden",
@@ -433,7 +441,7 @@ const Home = createClass({
     </div>;
 
     // Contents, where the app/editor is displayed
-    const contents = <div 
+    const contents = <div
       style={{
         width:"100%",
         height:"calc(100% - 70px)",
@@ -454,7 +462,7 @@ const Home = createClass({
 
 
 
-window.onload = () => 
+window.onload = () =>
   Inferno.render(
     <Home/>,
     document.getElementById("main"));
