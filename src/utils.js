@@ -37,5 +37,8 @@ module.exports = {
       c[i] = f(a[i], b[i]);
     }
     return c;
+  },
+  repeat: function repeat(n, s) { 
+    return n === 0 ? "" : s + repeat(n-1, s);
   }
 };
