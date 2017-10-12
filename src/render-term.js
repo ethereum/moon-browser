@@ -5,7 +5,16 @@ setInterval(() => window.SEED = 0, 100);
 const Inferno = require("inferno");
 const Moon = require("moon-lang")();
 
-let fetchInterval = null; // TODO: bad
+let fetcher = null; // TODO: bad
+(function fetch() {
+  if (fetcher) {
+    fetcher().then(() => {
+      setTimeout(fetch, 200);
+    });
+  } else {
+    setTimeout(fetch, 300);
+  }
+})();
 
 module.exports = (term, path, size, appState, accounts, performIO, debug) => {
 
@@ -32,7 +41,8 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       const size = term.size || env.size;
 
       let newEnv = {
-        address: accounts[0] && accounts[0].address || "0x" // only 1 account for now
+        address: accounts[0] && accounts[0].address || "0x", // only 1 account for now
+        size: size
       };
 
       for (let key in env) {
@@ -77,8 +87,9 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       }
 
       if (term.onFetch) {
-        if (fetchInterval) clearInterval(fetchInterval);
-        fetchInterval = setInterval(() => performIO(term.onFetch, env.path, env.yell), 1000);
+        fetcher = () => {
+          return performIO(term.onFetch, env.path, env.yell);
+        }
       }
 
       const value = render(term.value, newEnv);

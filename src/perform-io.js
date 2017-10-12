@@ -14,6 +14,12 @@ module.exports = (self, program, path, yell) => {
       return Promise.resolve(null);
     },
 
+    // Gets the current state
+    "getState": () => {
+      //console.log(self.state.appState[path.join("/")]);
+      return Promise.resolve(self.state.appState[path.join("/")]);
+    },
+
     // Interacts with the Ethereum network
     "eth": (arg) => {
 
