@@ -5,10 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <style>
+
+      @font-face {
+        font-family: icomoon;
+        src: url(fonts/icomoon.ttf);
+      }
+
       * {
         padding: 0px;
         margin: 0px;
         box-sizing: border-box;
+        outline: none;
+        overflow: hidden;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
       }
       html {
@@ -23,10 +31,16 @@
         background-position: center;
         background-size: 1400px;
         overflow: hidden;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
       }
       #main {
         height: 100%;
         display: block;
+      }
+      .selectable *, .unselectable *,
+      .renderedApp * {
+        display: inline-block;
+        position: absolute;
       }
       textarea, input, button, pre, span {
         outline: none;
@@ -51,6 +65,21 @@
         -ms-user-select: none;
         user-select: none;
       }
+
+      .floater {
+        position: fixed;
+        top: calc(50%-100px);
+        right: calc(50%-200px);
+        z-index: 10;
+        width: 420px;
+        padding: 9.2px 16px;
+        background: rgba(241,241,241, 0.95);
+        border: 1px solid rgb(227,227,227);
+        border-radius: 3px;
+        box-shadow: 0px 0px 1px rgb(99,99,99), 0px 0px 10px rgba(99,99,99, 0.4);
+        -webkit-backdrop-filter: blur(50px) brightness(110%);
+      }
+
     </style>
   </head>
   <body spellcheck="false" scroll="no">

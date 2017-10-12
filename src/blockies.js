@@ -14,7 +14,9 @@ module.exports = createClass({
     if (blockiesApp) {
       const blockiesTerm = blockiesApp(this.props.address)(8)(this.props.width/8);
       return <div style={{
-        position: "relative",
+        position: "absolute",
+        left: "0px",
+        top: "0px",
         width: this.props.width,
         height: this.props.width}}>
         {renderTerm(blockiesTerm, [], [this.props.width,this.props.width], [], ()=>{}, false)}
@@ -24,4 +26,3 @@ module.exports = createClass({
     }
   }
 });
-

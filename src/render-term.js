@@ -84,7 +84,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       const value = render(term.value, newEnv);
 
       const renderBorder = border =>
-        border ? 
+        border ?
           (border.size||0) + "px "
           + (border.style||"") + " "
           + (border.color||"")
@@ -110,7 +110,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
           + term.font.shadow.color)
         : null;
 
-      return Inferno.createVNode(2, 
+      return Inferno.createVNode(2,
         term.input ? "input" : "div",
         term.selectable ? "selectable" : "unselectable",
         term.input ? null : value,
@@ -120,15 +120,12 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
           disabled: term.input && term.disabled ? true : false,
           style: {
             position: "absolute",
-            left: pos[0] + "px",
-            top: pos[1] + "px",
+            left: ((pos[0] == 0) ? "" : pos[0] + "px"),
+            top: ((pos[1] == 0) ? "" : pos[1] + "px"),
             width: size[0] + "px",
             height: size[1] + "px",
-            lineHeight: size[1] + "px",
             cursor: term.cursor,
-            overflow: "hidden",
-            outline: "none",
-            fontSize: ((term.font||O).size || (size[1] * 0.9 || 0)) + "px",
+            fontSize: (((term.font||O).size) ? ((term.font||O).size) + "px" : null),
             fontFamily: (term.font||O).family || null,
             fontWeight: (term.font||O).weight || null,
             fontStyle: (term.font||O).style || null,
