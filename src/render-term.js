@@ -5,7 +5,16 @@ setInterval(() => window.SEED = 0, 100);
 const Inferno = require("inferno");
 const Moon = require("moon-lang")();
 
-let fetchInterval = null; // TODO: bad
+let fetcher = null; // TODO: bad
+(function fetch() {
+  if (fetcher) {
+    fetcher().then(() => {
+      setTimeout(fetch, 200);
+    });
+  } else {
+    setTimeout(fetch, 300);
+  }
+})();
 
 module.exports = (term, path, size, appState, accounts, performIO, debug) => {
 
@@ -32,7 +41,8 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       const size = term.size || env.size;
 
       let newEnv = {
-        address: accounts[0] && accounts[0].address || "0x" // only 1 account for now
+        address: accounts[0] && accounts[0].address || "0x", // only 1 account for now
+        size: size
       };
 
       for (let key in env) {
@@ -77,8 +87,9 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       }
 
       if (term.onFetch) {
-        if (fetchInterval) clearInterval(fetchInterval);
-        fetchInterval = setInterval(() => performIO(term.onFetch, env.path, env.yell), 1000);
+        fetcher = () => {
+          return performIO(term.onFetch, env.path, env.yell);
+        }
       }
 
       const value = render(term.value, newEnv);
@@ -120,12 +131,14 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
           disabled: term.input && term.disabled ? true : false,
           style: {
             position: "absolute",
-            left: ((pos[0] == 0) ? "" : pos[0] + "px"),
-            top: ((pos[1] == 0) ? "" : pos[1] + "px"),
+            left: ((pos[0] === 0) ? "" : pos[0] + "px"),
+            top: ((pos[1] === 0) ? "" : pos[1] + "px"),
             width: size[0] + "px",
             height: size[1] + "px",
             cursor: term.cursor,
-            fontSize: (((term.font||O).size) ? ((term.font||O).size) + "px" : null),
+            overflow: "hidden",
+            outline: "none",
+            fontSize: ((term.font||O).size || (size[1] * 0.9 || 0)) + "px",
             fontFamily: (term.font||O).family || null,
             fontWeight: (term.font||O).weight || null,
             fontStyle: (term.font||O).style || null,
