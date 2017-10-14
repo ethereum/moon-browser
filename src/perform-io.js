@@ -16,7 +16,6 @@ module.exports = (self, program, path, yell) => {
 
     // Gets the current state
     "getState": () => {
-      //console.log(self.state.appState[path.join("/")]);
       return Promise.resolve(self.state.appState[path.join("/")]);
     },
 
@@ -61,10 +60,21 @@ module.exports = (self, program, path, yell) => {
           };
 
           return Eth.transaction.addDefaults(rpc, tx)
-            .then(tx => (console.log("tx:",JSON.stringify(tx,null,2)), tx))
+            .then(tx => {
+              console.log("-> Sending transaction:", JSON.stringify(tx,null,2));
+              return tx;
+            })
             .then(tx => Eth.transaction.sign(tx, account))
-            .then(stx => (console.log("signed:",stx),rpc("eth_sendRawTransaction", [stx])))
-            .then(txid => (console.log("txid:",JSON.stringify(txid,null,2)), txid.error || txid));
+            .then(stx => {
+              console.log("-> Raw transaction (signed):", stx);
+              rpc("eth_sendRawTransaction", [stx]);
+            })
+            .then(result => {
+              console.log("Transaction result:", JSON.stringify(result,null,2));
+              return result.error
+                ? {type: "error", value: result.error}
+                : {type: "txHash", value: result}
+            });
 
         default:
           return rpc(method, params);
