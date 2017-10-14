@@ -136,7 +136,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
             width: size[0] + "px",
             height: size[1] + "px",
             cursor: term.cursor,
-            overflow: "hidden",
+            overflow: term.scroll ? "scroll" : "hidden",
             outline: "none",
             fontSize: ((term.font||O).size || (size[1] * 0.9 || 0)) + "px",
             fontFamily: (term.font||O).family || null,
