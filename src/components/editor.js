@@ -2,7 +2,7 @@ const Inferno = require("inferno");
 const createClass = require("inferno-create-class");
 const Moon = require("moon-lang");
 const MoonSyntax = require("moon-lang/lib/moon-syntax");
-const repeat = require("./utils").repeat;
+const repeat = require("./../utils").repeat;
 
 module.exports = createClass({
   getInitialState() {

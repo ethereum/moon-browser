@@ -131,8 +131,8 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
           disabled: term.input && term.disabled ? true : false,
           style: {
             position: "absolute",
-            left: ((pos[0] === 0) ? "" : pos[0] + "px"),
-            top: ((pos[1] === 0) ? "" : pos[1] + "px"),
+            left: pos[0] + "px",
+            top: pos[1] + "px",
             width: size[0] + "px",
             height: size[1] + "px",
             cursor: term.cursor,
