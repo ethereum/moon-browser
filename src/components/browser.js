@@ -265,7 +265,7 @@ module.exports = createClass({
       fontWeight: "600",
       fontFamily: "helvetica",
       color: "rgb(108,108,108)"}}>
-      Welcome to Moon!
+      {(((this.activeAppData||{}).term||{}).title||{}).text || "Welcome to Moon!"}
     </span>;
 
     // The URL input displayed on top
@@ -286,7 +286,6 @@ module.exports = createClass({
         fontSize: "12px",
         textAlign: "center",
         fontWeight: "300"
-        // fontFamily: "monospace"
       }}
       onInput={e => this.setActiveApp(e.target.value)}
       value={this.getActiveAppName()}/>;
@@ -390,7 +389,7 @@ module.exports = createClass({
       whiteSpace: "nowrap",
       overflowX: "hidden",
       height: "70px",
-      background: "rgb(241,241,241)",
+      background: (((this.activeAppData||{}).term||{}).title||{}).background || "rgb(241,241,241)",
       borderTop: "1px solid rgb(222,222,222)",
       textAlign: "center"
     };
