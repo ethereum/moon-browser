@@ -8,7 +8,9 @@ module.exports = (props) => {
       "-o-filter": "blur(4px)",
       "-ms-filter": "blur(4px)",
       "filter": "blur(4px)",
-      "cursor": "pointer"
+      "cursor": "pointer",
+      "width": "100%",
+      "height": "100%"
     }}>
     {props.children}
   </div>

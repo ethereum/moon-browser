@@ -378,7 +378,6 @@ module.exports = createClass({
       }}
       onImportPrivateKey={key => {
         this.addAccount(Eth.account.fromPrivate(key));
-        this.toggleShowAccountList();
       }}
       onSelectAccount={address => {
         this.setActiveAccount(address);
@@ -421,10 +420,12 @@ module.exports = createClass({
 
     // The site itself
     return this.state.showModal
-      ? <div>
-          <Blur>{appBox}</Blur>
-          {selectAccount}
-        </div>
-      : appBox;
+      ? <div style={{width:"100%",height:"100%"}}>
+        {selectAccount}
+        <Blur>{appBox}</Blur>
+      </div>
+      : <div style={{width:"100%",height:"100%"}}>
+        {appBox}
+      </div>;
   }
 });
