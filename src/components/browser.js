@@ -21,8 +21,8 @@ module.exports = createClass({
   // Lifecycle
 
   getInitialState() {
-    this.activeAppInfo = {};
-    this.activeAppInfoNonce = 0;
+    this.activeAppData = {};
+    this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
     this.homeAppCid = "zb2rhi7fsdeKtAvGi1seH73xykAp6A9DJ2FJdV96vnWg5iqib";
 
@@ -120,6 +120,10 @@ module.exports = createClass({
     return this.getAccount(this.state.activeAccount);
   },
 
+  setActiveAccount(address) {
+    this.setState({activeAccount: address});
+  },
+
   getAccountBalance(account) {
     return account.balance ? Eth.nat.toEther(account.balance) : 0;
   },
@@ -132,20 +136,20 @@ module.exports = createClass({
 
 
   // App methods
-  getActiveApp(state) {
+  getActiveAppName(state) {
     return (state || this.state).activeAppHistory[(state || this.state).activeAppHistory.length - 1];
   },
 
   setActiveApp(name) {
-    if (name !== this.getActiveApp()) {
+    if (name !== this.getActiveAppName()) {
       console.log("-> Setting active app to: " + name);
       Moon.load(name).then(code => {
         console.log("-> Loaded code. Importing dependencies.");
-        if (this.activeAppInfo.code !== code) {
+        if (this.activeAppData.code !== code) {
           this.state.activeAppHistory.push(name);
         }
         const newState = merge(this.state, {activeAppHistory: this.state.activeAppHistory});
-        const activeApp = this.getActiveApp(newState);
+        const activeApp = this.getActiveAppName(newState);
         const invalid = () => ({type:"txt", value:"<invalid-term>"});
         const term = Moon.imports(activeApp)
           .then(imported => {
@@ -153,11 +157,11 @@ module.exports = createClass({
             return Moon.parse(imported, {fast:1});
           })
           .catch(invalid);
-        const nonce = this.activeAppInfoNonce++;
+        const nonce = this.activeAppDataNonce++;
         return term.then(term => {
           console.log("-> Code parsed. Initializing DApp...");
-          if (nonce + 1 === this.activeAppInfoNonce) { // avoids front running
-            this.activeAppInfo = {code, term};
+          if (nonce + 1 === this.activeAppDataNonce) { // avoids front running
+            this.activeAppData = {code, term};
             this.setState(newState);
             this.forceUpdate();
           }
@@ -184,6 +188,45 @@ module.exports = createClass({
     this.setActiveApp(this.state.activeAppHistory.pop());
   },
 
+  renderApp({code, term, state}) {
+    if (!code) {
+      return <div>Loading app...</div>;
+
+    } else if (this.state.mode === "edit") {
+      return <Editor
+        onChange={code => {
+          this.setActiveCode(code);
+        }}
+        onLink={name => {
+          this.setActiveApp(name);
+        }}
+        code={code}/>;
+
+    } else {
+      const {width, height} = this.mainport.getBoundingClientRect();
+      //console.log("st ->",JSON.stringify(this.state.appState, null, 2));
+      //console.log("\n");
+      return <div className="renderedApp" style={{position:"relative", height:"100%", width:"100%"}}>
+        {renderTerm(
+          term,
+          [],
+          [width, height],
+          this.state.appState,
+          this.getActiveAccount().address,
+          this.performIO,
+          this.state.debug)
+        }
+      </div>;
+
+    }
+  },
+
+  performIO(program, baseState, path, yell) {
+    return performIO(this, program, baseState, path, yell);
+  },
+
+
+  // Browsing
   goBack() {
     if (this.state.activeAppHistory.length > 1) {
       this.state.activeAppHistory.pop();
@@ -201,40 +244,6 @@ module.exports = createClass({
 
   toggleDebug() {
     this.setState({debug: !this.state.debug});
-  },
-
-  renderApp({code, term, state}) {
-    if (!code) {
-      return <div>Loading app...</div>;
-
-    } else if (this.state.mode === "edit") {
-      return <Editor
-        onChange={code => {
-          this.setActiveCode(code);
-        }}
-        onLink={name => {
-          this.setActiveApp(name);
-        }}
-        code={code}/>;
-
-    } else {
-      const {width, height} = this.mainport.getBoundingClientRect();
-      return <div className="renderedApp" style={{position:"relative", height:"100%", width:"100%"}}>
-        {renderTerm(
-          term,
-          [],
-          [width, height],
-          this.state.appState,
-          this.getAccounts(),
-          this.performIO,
-          this.state.debug)}
-      </div>;
-
-    }
-  },
-
-  performIO(program, path, yell) {
-    return performIO(this, program, path, yell);
   },
 
 
@@ -280,7 +289,7 @@ module.exports = createClass({
         // fontFamily: "monospace"
       }}
       onInput={e => this.setActiveApp(e.target.value)}
-      value={this.getActiveApp()}/>;
+      value={this.getActiveAppName()}/>;
 
     // The (...) options for the app
     //const optionsButtonStyle = {
@@ -357,14 +366,23 @@ module.exports = createClass({
         //height: "24px",
         overflow: "hidden",
         borderRadius:"12px"
-        }}>
+      }}>
       <Blockies address={this.getActiveAccount().address} width={24}/>
     </div>;
     const userAvatar = Button("right", userBlockies, e => this.toggleShowAccountList());
 
     // Account list
     const selectAccount = <SelectAccount
-      onClose={() => this.toggleShowAccountList()}
+      onClose={() => {
+        this.toggleShowAccountList();
+      }}
+      onImportPrivateKey={key => {
+        this.addAccount(Eth.account.fromPrivate(key));
+        this.toggleShowAccountList();
+      }}
+      onSelectAccount={address => {
+        this.setActiveAccount(address);
+      }}
       accounts={this.getAccounts()}/>;
 
     // The top bar itself
@@ -393,13 +411,13 @@ module.exports = createClass({
         position:"relative"
       }}
       ref={e=>this.mainport=e}>
-      {this.renderApp(this.activeAppInfo)}
+      {this.renderApp(this.activeAppData)}
     </div>
 
     const appBox = <div style={{width:"100%",height:"100%"}}>
-        {topBar}
-        {contents}
-      </div>;
+      {topBar}
+      {contents}
+    </div>;
 
     // The site itself
     return this.state.showModal

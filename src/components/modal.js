@@ -3,9 +3,10 @@ const Inferno = require("inferno");
 module.exports = (props) => {
   return <div
     style={{
-      position: "absolute",
-      left: "0px",
-      top: "0px",
+      position: "fixed",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       width: "100%",
       height: "100%",
       zIndex: 10,
@@ -14,14 +15,9 @@ module.exports = (props) => {
     onClick={() => props.onClose()}>
     <div
       style={{
-        width: "420px",
-        height: "160px",
         cursor: "auto",
-        top: "calc(50% - 100px)",
-        right: "calc(50% - 200px)",
-        position: "fixed",
         zIndex: 20,
-        padding: "9.2px 16px",
+        padding: "9px 16px",
         background: "rgba(241,241,241,0.95)",
         border: "1px solid rgb(227,227,227)",
         borderRadius: "3px",

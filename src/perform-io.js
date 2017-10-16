@@ -4,19 +4,24 @@ const Eth = require("eth-lib");
 const rpc = Eth.rpc(urls.ethereum.mainnet);
 const merge = require("./utils").merge;
 
-module.exports = (self, program, path, yell) => {
+module.exports = (self, program, baseState, path, yell) => {
 
   return Moon.performIO(program, {
 
     // Sets the application's state
-    "setState": newState => {
-      self.setState(merge(self.state, {appState: {[path.join("/")]: newState}}));
+    "set": newState => {
+      const stateChange = {appState: {[path.join("/")]: newState}};
+      self.setState(merge(self.state, stateChange));
       return Promise.resolve(null);
     },
 
     // Gets the current state
-    "getState": () => {
-      return Promise.resolve(self.state.appState[path.join("/")]);
+    "get": key => {
+      const liveState = self.state.appState[path.join("/")] || {};
+      return Promise.resolve(liveState[key] === undefined ? baseState[key] : liveState[key]);
+      //const realState = (liveState === undefined ? baseState : liveState) || {};
+      //console.log("get", JSON.stringify([baseState, liveState]));
+      //return Promise.resolve(realState[key]);
     },
 
     // Interacts with the Ethereum network

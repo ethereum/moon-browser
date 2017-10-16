@@ -21,10 +21,17 @@ module.exports = createClass({
         top: "0px",
         width: this.props.width,
         height: this.props.width}}>
-        {renderTerm(blockiesTerm, [], [this.props.width,this.props.width], [], ()=>{}, false)}
+        {renderTerm(
+          blockiesTerm,
+          [],
+          [this.props.width, this.props.width],
+          {},
+          "0x",
+          ()=>{},
+          false)}
       </div>;
     } else {
-      return "X";
+      return "";
     }
   }
 });
