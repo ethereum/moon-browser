@@ -37,8 +37,7 @@
         height: 100%;
         display: block;
       }
-      .selectable *, .unselectable *,
-      .renderedApp * {
+      .selectable *, .unselectable *, .renderedApp * {
         display: inline-block;
         position: absolute;
       }
@@ -56,7 +55,7 @@
         -moz-user-select: text;
         -ms-user-select: text;
         user-select: text;
-    }
+      }
       .unselectable {
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -64,20 +63,6 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-      }
-
-      .floater {
-        position: fixed;
-        top: calc(50% - 100px);
-        right: calc(50% - 200px);
-        z-index: 10;
-        width: 420px;
-        padding: 9.2px 16px;
-        background: rgba(241,241,241, 0.95);
-        border: 1px solid rgb(227,227,227);
-        border-radius: 3px;
-        box-shadow: 0px 0px 1px rgb(99,99,99), 0px 0px 10px rgba(99,99,99, 0.4);
-        -webkit-backdrop-filter: blur(50px) brightness(110%);
       }
 
     </style>

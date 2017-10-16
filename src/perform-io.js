@@ -4,20 +4,24 @@ const Eth = require("eth-lib");
 const rpc = Eth.rpc(urls.ethereum.mainnet);
 const merge = require("./utils").merge;
 
-module.exports = (self, program, path, yell) => {
+module.exports = (self, program, baseState, path, yell) => {
 
   return Moon.performIO(program, {
 
     // Sets the application's state
-    "setState": newState => {
-      self.setState(merge(self.state, {appState: {[path.join("/")]: newState}}));
+    "set": newState => {
+      const stateChange = {appState: {[path.join("/")]: newState}};
+      self.setState(merge(self.state, stateChange));
       return Promise.resolve(null);
     },
 
     // Gets the current state
-    "getState": () => {
-      //console.log(self.state.appState[path.join("/")]);
-      return Promise.resolve(self.state.appState[path.join("/")]);
+    "get": key => {
+      const liveState = self.state.appState[path.join("/")] || {};
+      return Promise.resolve(liveState[key] === undefined ? baseState[key] : liveState[key]);
+      //const realState = (liveState === undefined ? baseState : liveState) || {};
+      //console.log("get", JSON.stringify([baseState, liveState]));
+      //return Promise.resolve(realState[key]);
     },
 
     // Interacts with the Ethereum network
@@ -61,10 +65,21 @@ module.exports = (self, program, path, yell) => {
           };
 
           return Eth.transaction.addDefaults(rpc, tx)
-            .then(tx => (console.log("tx:",JSON.stringify(tx,null,2)), tx))
+            .then(tx => {
+              console.log("-> Sending transaction:", JSON.stringify(tx,null,2));
+              return tx;
+            })
             .then(tx => Eth.transaction.sign(tx, account))
-            .then(stx => (console.log("signed:",stx),rpc("eth_sendRawTransaction", [stx])))
-            .then(txid => (console.log("txid:",JSON.stringify(txid,null,2)), txid.error || txid));
+            .then(stx => {
+              console.log("-> Raw transaction (signed):", stx);
+              rpc("eth_sendRawTransaction", [stx]);
+            })
+            .then(result => {
+              console.log("Transaction result:", JSON.stringify(result,null,2));
+              return result.error
+                ? {type: "error", value: result.error}
+                : {type: "txHash", value: result}
+            });
 
         default:
           return rpc(method, params);

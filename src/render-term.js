@@ -16,8 +16,7 @@ let fetcher = null; // TODO: bad
   }
 })();
 
-module.exports = (term, path, size, appState, accounts, performIO, debug) => {
-
+module.exports = (term, path, size, appState, address, performIO, debug) => {
   const render = (term, env) => {
     if (typeof term === "string" || typeof term === "number") {
       return term;
@@ -41,7 +40,6 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       const size = term.size || env.size;
 
       let newEnv = {
-        address: accounts[0] && accounts[0].address || "0x", // only 1 account for now
         size: size
       };
 
@@ -51,12 +49,6 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
 
       if (term.name) {
         newEnv.path = env.path.concat([term.name]);
-      }
-
-      if (term.state !== undefined) {
-        newEnv.state = appState[newEnv.path.join("/")] === undefined
-          ? term.state
-          : appState[newEnv.path.join("/")];
       }
 
       if (term.size) {
@@ -82,13 +74,22 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
         }
       }
 
+      if (term.state !== undefined) {
+        const liveState = appState[newEnv.path.join("/")] || {};
+        const baseState = term.state;
+        newEnv.baseState = baseState;
+        for (let key in baseState) {
+          newEnv[key] = liveState[key] === undefined ? baseState[key] : liveState[key];
+        }
+      }
+
       if (term.onHear) {
-        newEnv.yell = word => performIO(term.onHear(word), env.path, env.yell);
+        newEnv.yell = word => performIO(term.onHear(word), newEnv.baseState, env.path, env.yell);
       }
 
       if (term.onFetch) {
         fetcher = () => {
-          return performIO(term.onFetch, env.path, env.yell);
+          return performIO(term.onFetch, newEnv.baseState, env.path, env.yell);
         }
       }
 
@@ -103,7 +104,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
 
       const makeEvent = (bind, key) => ev => {
         if (term[key]) {
-          performIO(bind(ev, term[key]), env.path, env.yell);
+          performIO(bind(ev, term[key]), newEnv.baseState, env.path, env.yell);
           ev.stopPropagation();
         }
       };
@@ -131,12 +132,12 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
           disabled: term.input && term.disabled ? true : false,
           style: {
             position: "absolute",
-            left: ((pos[0] === 0) ? "" : pos[0] + "px"),
-            top: ((pos[1] === 0) ? "" : pos[1] + "px"),
+            left: pos[0] + "px",
+            top: pos[1] + "px",
             width: size[0] + "px",
             height: size[1] + "px",
             cursor: term.cursor,
-            overflow: "hidden",
+            overflow: term.scroll ? "scroll" : "hidden",
             outline: "none",
             fontSize: ((term.font||O).size || (size[1] * 0.9 || 0)) + "px",
             fontFamily: (term.font||O).family || null,
@@ -175,7 +176,7 @@ module.exports = (term, path, size, appState, accounts, performIO, debug) => {
       path: path,
       size: size,
       yell: _ => performIO(do_ => do_("stop")),
-      accounts: accounts
+      address: address
     });
   } catch (e) {
     console.log(e);

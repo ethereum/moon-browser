@@ -1,9 +1,11 @@
-const urls = require("./urls.json");
+const urls = require("./../urls.json");
 const Moon = require("moon-lang")(urls.ipfs);
 const Inferno = require("inferno");
 const createClass = require("inferno-create-class");
-const renderTerm = require("./render-term");
-const blockiesAppCid = "zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7";
+const renderTerm = require("./../render-term");
+
+// Loads blockies app from Moon-lang
+let blockiesAppCid = "zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7";
 let blockiesApp = null;
 Moon.imports(blockiesAppCid).then(blockiesAppCode => {
   blockiesApp = Moon.parse(blockiesAppCode);
@@ -19,10 +21,17 @@ module.exports = createClass({
         top: "0px",
         width: this.props.width,
         height: this.props.width}}>
-        {renderTerm(blockiesTerm, [], [this.props.width,this.props.width], [], ()=>{}, false)}
+        {renderTerm(
+          blockiesTerm,
+          [],
+          [this.props.width, this.props.width],
+          {},
+          "0x",
+          ()=>{},
+          false)}
       </div>;
     } else {
-      return "X";
+      return "";
     }
   }
 });
