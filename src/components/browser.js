@@ -266,6 +266,7 @@ module.exports = createClass({
       fontFamily: "helvetica",
       mixBlendMode: "multiply",
       color: "rgba(75, 75, 75, 0.75)"}}>
+
       {(((this.activeAppData||{}).term||{}).title||{}).text || "Welcome to Moon!"}
     </span>;
 
