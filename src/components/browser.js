@@ -10,7 +10,7 @@ const renderTerm = require("./../render-term");
 const {merge, memoizeAsync, zipWith} = require("./../utils");
 const Blockies = require("./blockies");
 const Blur = require("./blur");
-const SelectAccount = require("./selectAccount"); 
+const SelectAccount = require("./selectAccount");
 
 // Temporary hack for debugging
 window.reset = () => window.localStorage.removeItem("mist-lite-data");
@@ -264,7 +264,9 @@ module.exports = createClass({
       fontSize: "14px",
       fontWeight: "600",
       fontFamily: "helvetica",
-      color: "rgb(108,108,108)"}}>
+      mixBlendMode: "multiply",
+      color: "rgba(75, 75, 75, 0.75)"}}>
+
       {(((this.activeAppData||{}).term||{}).title||{}).text || "Welcome to Moon!"}
     </span>;
 
@@ -277,7 +279,7 @@ module.exports = createClass({
       style={{
         display: "inline-block",
         border: "0px solid white",
-        color: "#4A90E2",
+        color: (((this.activeAppData||{}).term||{}).title||{}).actionColor || "rgb(74, 144, 226)",
         opacity: "0.5",
         margin: "0px 4px",
         padding: "4px",
@@ -300,12 +302,11 @@ module.exports = createClass({
     //const optionsButton = Button("⋮", optionsButtonStyle, optionsButtonEffect);
 
     // Title
-    const titleUrl = <div
+    const titleUrl = <div className="titleUrl"
       style={{
         display: "inline-block",
         verticalAlign: "top",
-        height: "100%",
-        paddingTop: "20px"
+        marginTop: "20px"
       }}>
       <div>{title}</div>
       <div>{url}</div>
@@ -335,7 +336,8 @@ module.exports = createClass({
             top: "32px",
             width:"30px",
             fontSize: "24px",
-            color: "#4A90E2"
+            textShadow: "rgba(255,255,255,0.5) 0 1px 0",
+            color: (((this.activeAppData||{}).term||{}).title||{}).actionColor || "rgb(74, 144, 226)"
           }}> {icon} </div>
         : icon}
       </span>;
