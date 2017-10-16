@@ -265,7 +265,7 @@ module.exports = createClass({
       fontWeight: "600",
       fontFamily: "helvetica",
       color: "rgb(108,108,108)"}}>
-      Welcome to Moon!
+      {(((this.activeAppData||{}).term||{}).title||{}).text || "Welcome to Moon!"}
     </span>;
 
     // The URL input displayed on top
@@ -286,7 +286,6 @@ module.exports = createClass({
         fontSize: "12px",
         textAlign: "center",
         fontWeight: "300"
-        // fontFamily: "monospace"
       }}
       onInput={e => this.setActiveApp(e.target.value)}
       value={this.getActiveAppName()}/>;
@@ -378,7 +377,6 @@ module.exports = createClass({
       }}
       onImportPrivateKey={key => {
         this.addAccount(Eth.account.fromPrivate(key));
-        this.toggleShowAccountList();
       }}
       onSelectAccount={address => {
         this.setActiveAccount(address);
@@ -391,7 +389,7 @@ module.exports = createClass({
       whiteSpace: "nowrap",
       overflowX: "hidden",
       height: "70px",
-      background: "rgb(241,241,241)",
+      background: (((this.activeAppData||{}).term||{}).title||{}).background || "rgb(241,241,241)",
       borderTop: "1px solid rgb(222,222,222)",
       textAlign: "center"
     };
@@ -421,10 +419,12 @@ module.exports = createClass({
 
     // The site itself
     return this.state.showModal
-      ? <div>
-          <Blur>{appBox}</Blur>
-          {selectAccount}
-        </div>
-      : appBox;
+      ? <div style={{width:"100%",height:"100%"}}>
+        {selectAccount}
+        <Blur>{appBox}</Blur>
+      </div>
+      : <div style={{width:"100%",height:"100%"}}>
+        {appBox}
+      </div>;
   }
 });
