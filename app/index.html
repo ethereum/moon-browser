@@ -4,6 +4,7 @@
     <title>App</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="icon.png" sizes="128x128">
     <style>
 
       @font-face {
@@ -89,12 +90,15 @@
       }
 
       .titleUrl input {
-        transition: transform 0.5s;
+        transition: transform 0.5s, opacity 0.75s, font-weight 0.25s;
+        opacity: 0.5;
+        font-weight: 300;
       }
 
       .titleUrl:hover input {
           transform: translateY(-10px);
           font-weight: 600;
+          opacity: 1;
       }
 
       .button {

@@ -129,6 +129,7 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
         {
           value: term.input ? value : null,
           type: term.input ? term.type : null,
+          placeholder: term.input ? term.placeholder : null,
           disabled: term.input && term.disabled ? true : false,
           style: {
             position: "absolute",
