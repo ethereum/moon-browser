@@ -24,7 +24,8 @@ module.exports = createClass({
     this.activeAppData = {};
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
-    this.homeAppCid = "zb2rhi7fsdeKtAvGi1seH73xykAp6A9DJ2FJdV96vnWg5iqib";
+    this.homeAppCid = "zb2rhmqj5QpYzhL3DXGBfJDMrX1cwmNHh6SQ7zbgachqenNqp";
+    this.walletAppCid = "zb2rhiEPfhBsR32LFRVkuSYeEKtwQiB2uiQcJsBityDGKazN9";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
@@ -57,12 +58,17 @@ module.exports = createClass({
     this.fetchEthereumData();
     this.fetchEthereumDataTimer = setInterval(() => this.fetchEthereumData(), 30000);
     this.stateSaverInterval = setInterval(() => this.saveState(), 1500);
+    window.addEventListener("resize", () => {
+      if (this.resizeTimer) clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => this.forceUpdate(), 250);
+    });
   },
 
   componentWillUnmount() {
     clearTimeout(this.firstRefreshTimeout);
     clearInterval(this.fetchEthereumDataTimer);
     clearInterval(this.stateSaverInterval);
+    if (this.resizeTimer) clearTimeout(this.resizeTimer);
   },
 
   saveState() {
@@ -286,7 +292,7 @@ module.exports = createClass({
     </span>;
 
     // The URL input displayed on top
-    const url = <input
+    const urlBar = <input
       autocomplete="off"
       autocorrect="off"
       autocapitalize="off"
@@ -297,7 +303,8 @@ module.exports = createClass({
         color: buttonColor,
         margin: "0px 4px",
         padding: "4px",
-        width: "384px",
+        width: Math.min(window.innerWidth - 160, 384) + "px",
+        textOverflow: "ellipsis",
         height: "24px",
         fontSize: "12px",
         textAlign: "center",
@@ -315,14 +322,14 @@ module.exports = createClass({
     //const optionsButton = Button("⋮", optionsButtonStyle, optionsButtonEffect);
 
     // Title
-    const titleUrl = <div className="titleUrl"
+    const titleUrlBar = <div className="titleUrl"
       style={{
         display: "inline-block",
         verticalAlign: "top",
         marginTop: "20px"
       }}>
       <div>{title}</div>
-      <div>{url}</div>
+      <div>{urlBar}</div>
     </div>;
 
     // Component for a top-bar button
@@ -358,7 +365,7 @@ module.exports = createClass({
       // other ways to add this: &#xe90e; {{icon}} &#x{{icon}}
 
     // Tabs button
-    const tabsButton = Button("left", "", () => this.gotabs());
+    const tabsButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
 
     // Button to go back
     const backButton = Button("left", "", () => this.goBack());
@@ -418,7 +425,7 @@ module.exports = createClass({
       {tabsButton}
       {backButton}
       {forwardButton}
-      {titleUrl}
+      {titleUrlBar}
       {userAvatar}
       {editButton}
       {downloadButton}

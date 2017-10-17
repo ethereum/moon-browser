@@ -9,10 +9,10 @@ let fetcher = null; // TODO: bad
 (function fetch() {
   if (fetcher) {
     fetcher().then(() => {
-      setTimeout(fetch, 200);
+      setTimeout(fetch, 1000);
     });
   } else {
-    setTimeout(fetch, 300);
+    setTimeout(fetch, 1000);
   }
 })();
 
@@ -173,6 +173,11 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
   }
 
   try {
+    if (typeof term !== "object" || !term.name) {
+      return <pre style={{padding:"4px"}}>
+        {Moon.stringify(term)}
+      </pre>;
+    }
     return render(term, {
       path: path,
       size: size,

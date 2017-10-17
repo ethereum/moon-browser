@@ -18,7 +18,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "browserify": "^14.4.0",
-    "eth-lib": "^0.2.3",
+    "eth-lib": "^0.2.5",
     "incompose": "0.0.15",
     "inferno": "^3.7.0",
     "inferno-create-class": "^3.7.1",
