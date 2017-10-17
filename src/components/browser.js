@@ -365,7 +365,7 @@ module.exports = createClass({
       // other ways to add this: &#xe90e; {{icon}} &#x{{icon}}
 
     // Tabs button
-    const tabsButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
+    const tabsButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
 
     // Button to go back
     const backButton = Button("left", "", () => this.goBack());
