@@ -240,8 +240,17 @@ module.exports = createClass({
     }
   },
 
+  // Browsing
+  goForward() {
+    // TODO
+  },
+
   toggleMode() {
     this.setState({mode:({play:"edit",edit:"play"})[this.state.mode]});
+  },
+
+  downloadApp() {
+    // TODO
   },
 
   toggleShowAccountList() {
@@ -265,14 +274,20 @@ module.exports = createClass({
     const activeAccount = this.getActiveAccount();
     const canGoBack = this.state.activeAppHistory.length <= 1;
 
+    // Get appropriate colors
+    const appBackground = (((this.activeAppData||{}).term||{}).title||{}).background || [241,241,241];
+    const titleBackground = typeof appBackground == "object" ? "rgb(" + appBackground.join(",") + ")" : "#f1f1f1";
+    const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + appBackground[1] + 3 * appBackground[2]) < 3 * 256);
+    const buttonColor = isDarkTitleBar ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
+    const buttonShadows = isDarkTitleBar ? "rgba(0, 0, 0, 0.5) 0 -1px 0" : "rgba(255, 255, 255, 0.5) 0 1px 0";
+
     // The DApp title
     const title = <span style={{
       fontSize: "14px",
       fontWeight: "600",
       fontFamily: "helvetica",
-      mixBlendMode: "multiply",
-      color: "rgba(75, 75, 75, 0.75)"}}>
-
+      textShadow: buttonShadows,
+      color: buttonColor}}>
       {(((this.activeAppData||{}).term||{}).title||{}).text || "Welcome to Moon!"}
     </span>;
 
@@ -285,16 +300,14 @@ module.exports = createClass({
       style={{
         display: "inline-block",
         border: "0px solid white",
-        color: (((this.activeAppData||{}).term||{}).title||{}).actionColor || "rgb(74, 144, 226)",
-        opacity: "0.5",
+        color: buttonColor,
         margin: "0px 4px",
         padding: "4px",
-        width: Math.min(window.innerWidth - 160, 372) + "px",
+        width: Math.min(window.innerWidth - 160, 416) + "px",
         textOverflow: "ellipsis",
         height: "24px",
         fontSize: "12px",
         textAlign: "center",
-        fontWeight: "300"
       }}
       onInput={e => this.setActiveApp(e.target.value)}
       value={this.getActiveAppName()}/>;
@@ -343,8 +356,8 @@ module.exports = createClass({
             top: "32px",
             width:"30px",
             fontSize: "24px",
-            textShadow: "rgba(255,255,255,0.5) 0 1px 0",
-            color: (((this.activeAppData||{}).term||{}).title||{}).actionColor || "rgb(74, 144, 226)"
+            textShadow: buttonShadows,
+            color: buttonColor
           }}> {icon} </div>
         : icon}
       </span>;
@@ -352,13 +365,19 @@ module.exports = createClass({
       // other ways to add this: &#xe90e; {{icon}} &#x{{icon}}
 
     // Tabs button
-    const tabsButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
+    const tabsButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
 
     // Button to go back
     const backButton = Button("left", "", () => this.goBack());
 
+    // Button to go forward
+    const forwardButton = Button("left", "", () => this.goForward());
+
+    // Button to download the app
+    const downloadButton = Button("right", "", () => this.downloadApp());
+
     // Button to edit and play the app
-    const editButton = Button("right", "", () => this.toggleMode());
+    const editButton = Button("right", "", () => this.toggleMode());
 
     // The user avatar box
     const userBlockies = <div className="blockies"
@@ -398,16 +417,18 @@ module.exports = createClass({
       whiteSpace: "nowrap",
       overflowX: "hidden",
       height: "70px",
-      background: (((this.activeAppData||{}).term||{}).title||{}).background || "rgb(241,241,241)",
+      background: titleBackground,
       borderTop: "1px solid rgb(222,222,222)",
       textAlign: "center"
     };
     const topBar = <div style={topBarStyle}>
       {tabsButton}
       {backButton}
+      {forwardButton}
       {titleUrlBar}
       {userAvatar}
       {editButton}
+      {downloadButton}
     </div>;
 
     // Contents, where the app/editor is displayed
