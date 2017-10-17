@@ -303,7 +303,7 @@ module.exports = createClass({
         color: buttonColor,
         margin: "0px 4px",
         padding: "4px",
-        width: Math.min(window.innerWidth - 160, 384) + "px",
+        width: Math.min(window.innerWidth - 160, 416) + "px",
         textOverflow: "ellipsis",
         height: "24px",
         fontSize: "12px",
@@ -377,7 +377,7 @@ module.exports = createClass({
     const downloadButton = Button("right", "", () => this.downloadApp());
 
     // Button to edit and play the app
-    const editButton = Button("right", "", () => this.toggleMode());
+    const editButton = Button("right", "", () => this.toggleMode());
 
     // The user avatar box
     const userBlockies = <div className="blockies"
