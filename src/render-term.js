@@ -148,7 +148,6 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
           type: term.input ? term.type : null,
           placeholder: term.input ? term.placeholder : null,
           disabled: term.input && term.disabled ? true : false,
-          shouldComponentUpdate: term.name === "aaa" ? () => console.log("aa") : "",
           style: {
             position: "absolute",
             left: pos[0] + "px",
