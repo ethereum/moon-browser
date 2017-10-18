@@ -276,7 +276,7 @@ module.exports = createClass({
 
     // Get appropriate colors
     const appBackground = (((this.activeAppData||{}).term||{}).title||{}).background || [241,241,241];
-    const titleBackground = typeof appBackground == "object" ? "rgb(" + appBackground.join(",") + ")" : "#f1f1f1";
+    const titleBackground = typeof appBackground == "object" ? "rgb(" + [].join.call(appBackground,",") + ")" : "#f1f1f1";
     const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + appBackground[1] + 3 * appBackground[2]) < 3 * 256);
     const buttonColor = isDarkTitleBar ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
     const buttonShadows = isDarkTitleBar ? "rgba(0, 0, 0, 0.5) 0 -1px 0" : "rgba(255, 255, 255, 0.5) 0 1px 0";
