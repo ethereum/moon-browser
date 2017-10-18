@@ -1,5 +1,5 @@
 // TODO (in a future): migrations
-const version = "0.1.0";
+const version = "0.1.1";
 const userVersion = window.localStorage.getItem("moonx-version");
 if (userVersion !== version) {
   window.localStorage.clear();

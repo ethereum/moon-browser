@@ -4,6 +4,7 @@ setInterval(() => window.SEED = 0, 100);
 
 const Inferno = require("inferno");
 const Moon = require("moon-lang")();
+const createClass = require("inferno-create-class");
 
 let fetcher = null; // TODO: bad
 (function fetch() {
@@ -15,6 +16,17 @@ let fetcher = null; // TODO: bad
     setTimeout(fetch, 1000);
   }
 })();
+
+const CachedMoonTerm = createClass({
+  shouldComponentUpdate() {
+    return false;
+  },
+  render() {
+    return this.props.vNode;
+  }
+});
+
+let caches = {};
 
 module.exports = (term, path, size, appState, address, performIO, debug) => {
   const render = (term, env) => {
@@ -93,8 +105,6 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
         }
       }
 
-      const value = render(term.value, newEnv);
-
       const renderBorder = border =>
         border ?
           (border.size||0) + "px "
@@ -122,7 +132,14 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
           + term.font.shadow.color)
         : null;
 
-      return Inferno.createVNode(2,
+      const cacheKey = newEnv.path.join("/") + "$" + term.cache;
+      if (term.cache && caches[cacheKey]) {
+        return caches[cacheKey];
+      };
+      
+      const value = render(term.value, newEnv);
+
+      var vNode = Inferno.createVNode(2,
         term.input ? "input" : "div",
         term.selectable ? "selectable" : "unselectable",
         term.input ? null : value,
@@ -131,6 +148,7 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
           type: term.input ? term.type : null,
           placeholder: term.input ? term.placeholder : null,
           disabled: term.input && term.disabled ? true : false,
+          shouldComponentUpdate: term.name === "aaa" ? () => console.log("aa") : "",
           style: {
             position: "absolute",
             left: pos[0] + "px",
@@ -167,6 +185,13 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
           onMouseDown: makeEvent(mouse, "onMouseDown"),
           onMouseUp: makeEvent(mouse, "onMouseUp")
         });
+
+        if (term.cache) {
+          caches[cacheKey] = <CachedMoonTerm vNode={vNode}/>;
+          return caches[cacheKey];
+        } else {
+          return vNode;
+        }
     } else {
       return "<?>";
     }
