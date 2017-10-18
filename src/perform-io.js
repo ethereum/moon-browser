@@ -96,7 +96,7 @@ module.exports = (self, program, baseState, path, yell) => {
             .then(result => {
               console.log("Transaction result:", JSON.stringify(result,null,2));
               if (result.error) {
-                alert("Error:\n", JSON.stringify(result.error, null, 2));
+                alert(result.error);
                 return {
                   type: "error",
                   value: result.error
