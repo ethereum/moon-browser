@@ -160,7 +160,7 @@ module.exports = createClass({
         const term = Moon.imports(activeApp)
           .then(imported => {
             console.log("-> Imported " + imported.length + " chars. Parsing...");
-            return Moon.parse(imported, {fast:1});
+            return Moon.parse(imported);
           })
           .catch(invalid);
         const nonce = this.activeAppDataNonce++;
