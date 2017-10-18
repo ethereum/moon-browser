@@ -49,36 +49,74 @@ module.exports = (self, program, baseState, path, yell) => {
         case "eth_sendTransaction":
           var account = self.getActiveAccount();
 
-          // Gets user authorization
-          if (!confirm("Send " + Eth.nat.toEther(params[0].value || "0x0") + " eth?")) {
-            return Promise.resolve("Denied.");
-          }
-
           // Signs and submits the transaction
           var tx = {
             from: account.address,
             to: params[0].to,
             data: params[0].data || "0x",
-            gasPrice: "0x04e3b29200",
-            gas: "0x106a0", // TODO: remove
+            gasPrice: window.GAS_PRICE || "0x04e3b29200",
+            gas: window.GAS || "0x106a0", // TODO: remove
             value: params[0].value || "0x0"
           };
 
           return Eth.transaction.addDefaults(rpc, tx)
             .then(tx => {
+
+              var confirmationMessage
+                = "Sign and send transaction?\n\n"
+                + "- from: " + tx.from + "\n"
+                + "- to: " + tx.to + "\n"
+                + "- gasPrice: " + (Eth.nat.toNumber(tx.gasPrice) / 1000000000) + " gwei\n"
+                + "- gas: " + Eth.nat.toString(tx.gas) + "\n"
+                + "- maxFee: " + Eth.nat.toEther(Eth.nat.mul(tx.gasPrice, tx.gas)) + " eth (gasPrice * gas)\n"
+                + "- nonce: " + Eth.nat.toString(tx.nonce) + "\n"
+                + "- value: " + Eth.nat.toEther(tx.value) + " eth\n"
+                + (tx.data !== "0x"
+                  ? "- data:\n\n"
+                    + tx.data.slice(2,10) + "\n\n"
+                    + tx.data.slice(10)
+                      .match(/.{64}/g)
+                      .map(x => x.match(/.{32}/g).join("\n")+"\n")
+                      .join("\n")
+                  : "- data: 0x");
+
+              // Gets user authorization
+              if (!confirm(confirmationMessage)) {
+                throw "Denied.";
+              }
+
               console.log("-> Sending transaction:", JSON.stringify(tx,null,2));
               return tx;
             })
             .then(tx => Eth.transaction.sign(tx, account))
             .then(stx => {
               console.log("-> Raw transaction (signed):", stx);
-              rpc("eth_sendRawTransaction", [stx]);
+              return rpc("eth_sendRawTransaction", [stx]);
             })
             .then(result => {
               console.log("Transaction result:", JSON.stringify(result,null,2));
-              return result.error
-                ? {type: "error", value: result.error}
-                : {type: "txHash", value: result}
+              if (result.error) {
+                alert("Error:\n", JSON.stringify(result.error, null, 2));
+                return {
+                  type: "error",
+                  value: result.error
+                };
+              } else {
+                alert("Success. TxHash: " + result);
+                return {
+                  type: "txHash",
+                  value: result
+                };
+              }
+            })
+            .catch(err => {
+              console.log("Error:", err);
+              return {
+                type: "error",
+                error: typeof err === "string"
+                  ? err
+                  : JSON.stringify(err)
+              }
             });
 
         default:
