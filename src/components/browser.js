@@ -25,7 +25,7 @@ module.exports = createClass({
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
     this.homeAppCid = "zb2rhmqj5QpYzhL3DXGBfJDMrX1cwmNHh6SQ7zbgachqenNqp";
-    this.walletAppCid = "zb2rhiEPfhBsR32LFRVkuSYeEKtwQiB2uiQcJsBityDGKazN9";
+    this.walletAppCid = "zb2rhXmvuB3AjdagBX7556Pdmss7X4GD1u32dPbUAXTR1ka5Y";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
@@ -160,7 +160,7 @@ module.exports = createClass({
         const term = Moon.imports(activeApp)
           .then(imported => {
             console.log("-> Imported " + imported.length + " chars. Parsing...");
-            return Moon.parse(imported, {fast:1});
+            return Moon.parse(imported);
           })
           .catch(invalid);
         const nonce = this.activeAppDataNonce++;
@@ -276,7 +276,7 @@ module.exports = createClass({
 
     // Get appropriate colors
     const appBackground = (((this.activeAppData||{}).term||{}).title||{}).background || [241,241,241];
-    const titleBackground = typeof appBackground == "object" ? "rgb(" + appBackground.join(",") + ")" : "#f1f1f1";
+    const titleBackground = typeof appBackground == "object" ? "rgb(" + [].join.call(appBackground,",") + ")" : "#f1f1f1";
     const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + appBackground[1] + 3 * appBackground[2]) < 3 * 256);
     const buttonColor = isDarkTitleBar ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
     const buttonShadows = isDarkTitleBar ? "rgba(0, 0, 0, 0.5) 0 -1px 0" : "rgba(255, 255, 255, 0.5) 0 1px 0";
