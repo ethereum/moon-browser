@@ -180,13 +180,16 @@ module.exports = createClass({
     try {
       Moon.cid(code).then(cid => {
         if (!localStorage.getItem("mist-lite-saved-" + cid)) {
-          Moon.save(code).then(cid => localStorage.setItem("mist-lite-saved-" + cid, "1"));
+          Moon.save(code)
+            .then(cid => localStorage.setItem("mist-lite-saved-" + cid, "1"))
+            .catch(e => console.log(e));
         }
         localStorage.setItem("mist-lite-"+cid, Moon.pack(code));
         this.setActiveApp(cid);
-      });
+      }).catch(e => console.log(e));
     } catch(e) {
       // OK: just bad code on editor, do nothing
+      console.log(e);
     }
   },
 
@@ -201,6 +204,7 @@ module.exports = createClass({
     } else if (this.state.mode === "edit") {
       return <Editor
         onChange={code => {
+          console.log("got onchange:", code);
           this.setActiveCode(code);
         }}
         onLink={name => {

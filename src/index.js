@@ -11,5 +11,7 @@ const Browser = require("./components/browser.js");
 
 window.onload = () =>
   Inferno.render(
-    <Browser/>,
+    !window.crypto.subtle
+      ? <div>Use HTTPS.</div>
+      : <Browser/>,
     document.getElementById("main"));
