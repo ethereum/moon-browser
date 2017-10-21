@@ -16,16 +16,14 @@
   "author": "Victor Maia",
   "license": "",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "browserify": "^14.4.0",
     "eth-lib": "^0.2.5",
-    "incompose": "0.0.15",
     "inferno": "^3.7.0",
     "inferno-create-class": "^3.7.1",
-    "moon-lang": "^0.2.29",
-    "xhr-request-promise": "^0.1.2"
+    "moon-lang": "^0.2.29"
   },
   "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "browserify": "^14.4.0",
     "babel-cli": "^6.24.1",
     "babel-plugin-inferno": "^3.2.0",
     "babel-preset-env": "^1.5.2",
