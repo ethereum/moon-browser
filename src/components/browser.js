@@ -25,7 +25,7 @@ module.exports = createClass({
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
     this.homeAppCid = "zb2rhmqj5QpYzhL3DXGBfJDMrX1cwmNHh6SQ7zbgachqenNqp";
-    this.walletAppCid = "zb2rhXmvuB3AjdagBX7556Pdmss7X4GD1u32dPbUAXTR1ka5Y";
+    this.walletAppCid = "zb2rhj6n8nLCBXYSvdgxUQb5c1uBDcMv8EKiRSKwLRCyXjfit";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
@@ -281,7 +281,7 @@ module.exports = createClass({
     // Get appropriate colors
     const appBackground = (((this.activeAppData||{}).term||{}).title||{}).background || [241,241,241];
     const titleBackground = typeof appBackground == "object" ? "rgb(" + [].join.call(appBackground,",") + ")" : "#f1f1f1";
-    const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + appBackground[1] + 3 * appBackground[2]) < 3 * 256);
+    const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + 2 * appBackground[1] + appBackground[2]) < 255);
     const buttonColor = isDarkTitleBar ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
     const buttonShadows = isDarkTitleBar ? "rgba(0, 0, 0, 0.5) 0 -1px 0" : "rgba(255, 255, 255, 0.5) 0 1px 0";
 
@@ -369,7 +369,7 @@ module.exports = createClass({
       // other ways to add this: &#xe90e; {{icon}} &#x{{icon}}
 
     // Tabs button
-    const tabsButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
+    const bookmarkButton = Button("left", "", () => this.setActiveApp(this.walletAppCid));
 
     // Button to go back
     const backButton = Button("left", "", () => this.goBack());
@@ -425,8 +425,8 @@ module.exports = createClass({
       borderTop: "1px solid rgb(222,222,222)",
       textAlign: "center"
     };
-    const topBar = <div style={topBarStyle}>
-      {tabsButton}
+    const topBar = <div className="topBar" style={topBarStyle}>
+      {bookmarkButton}
       {backButton}
       {forwardButton}
       {titleUrlBar}
