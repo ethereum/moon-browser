@@ -26,7 +26,6 @@ module.exports = (self, program, baseState, path, yell) => {
 
     // Interacts with the Ethereum network
     "eth": (arg) => {
-
       if (!arg[0].length) {
         return Promise.resolve("Bad arguments.");
       }

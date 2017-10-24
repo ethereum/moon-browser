@@ -10,10 +10,10 @@ let fetcher = null; // TODO: bad
 (function fetch() {
   if (fetcher) {
     fetcher().then(() => {
-      setTimeout(fetch, 1000);
+      setTimeout(fetch, 3000);
     });
   } else {
-    setTimeout(fetch, 1000);
+    setTimeout(fetch, 3000);
   }
 })();
 
