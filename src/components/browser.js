@@ -24,8 +24,8 @@ module.exports = createClass({
     this.activeAppData = {};
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
-    this.homeAppCid = "zb2rhjWwtgqbKXskHiCL8tqgXfvsAMqE5zjauftuUFU42urXB";
-    this.walletAppCid = "zb2rhiWFjh2KSTwkSfKHn5EuGapW51u3WRdFm5QYLgpHFV9zZ";
+    this.homeAppCid = "zb2rhd6Ni5sftbGZfKXJUUAEXbog6iSUpL4nmPrB8m99u8q73";
+    this.walletAppCid = "zb2rhbFRV5LDxgSuVbwFdcPSLCaa1JfUn4GcQcXqLvdU7zELq";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
@@ -204,7 +204,6 @@ module.exports = createClass({
     } else if (this.state.mode === "edit") {
       return <Editor
         onChange={code => {
-          console.log("got onchange:", code);
           this.setActiveCode(code);
         }}
         onLink={name => {
@@ -292,7 +291,7 @@ module.exports = createClass({
       fontFamily: "helvetica",
       textShadow: buttonShadows,
       color: buttonColor}}>
-      {(((this.activeAppData||{}).term||{}).title||{}).text || "Welcome to Moon!"}
+      {(((this.activeAppData||{}).term||{}).title||{}).text || "Insert Hash..."}
     </span>;
 
     // The URL input displayed on top

@@ -5,7 +5,7 @@ const createClass = require("inferno-create-class");
 const renderTerm = require("./../render-term");
 
 // Loads blockies app from Moon-lang
-let blockiesAppCid = "zb2rhdLVJ4vfqAKdqPwydFxzYmzpiQeYERCuV9wbL51NkBMas";
+let blockiesAppCid = "zb2rhdkgwMJAUkUAqX9mcjNCsHx2sSHFrTyz2xiJtReKCQW9J";
 let blockiesApp = null;
 let forceUpdate = null;
 Moon.imports(blockiesAppCid).then(blockiesAppCode => {

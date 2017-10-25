@@ -43,10 +43,6 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
       return [].map.call(term, child => render(child, env));
 
     } else if (typeof term === "object") {
-      //if (term.value === undefined) {
-        //throw "Not renderable.";
-      //}
-
       const O = {};
       const pos = term.pos || [0,0];
       const size = term.size || env.size;
@@ -101,7 +97,7 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
 
       if (term.onFetch) {
         fetcher = () => {
-          return performIO(term.onFetch, newEnv.baseState, env.path, env.yell);
+          return performIO(term.onFetch, newEnv.baseState, newEnv.path, newEnv.yell);
         }
       }
 
@@ -114,7 +110,7 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
 
       const makeEvent = (bind, key) => ev => {
         if (term[key]) {
-          performIO(bind(ev, term[key]), newEnv.baseState, env.path, env.yell);
+          performIO(bind(ev, term[key]), newEnv.baseState, newEnv.path, newEnv.yell);
           ev.stopPropagation();
         }
       };
@@ -137,15 +133,15 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
         return caches[cacheKey];
       };
       
-      const value = render(term.value, newEnv);
+      const child = render(term.child, newEnv);
 
       ++RENDERED_NODES;
       var vNode = Inferno.createVNode(2,
         term.input ? "input" : "div",
         term.selectable ? "selectable" : "unselectable",
-        term.input ? null : value,
+        term.input ? null : child,
         {
-          value: term.input ? value : null,
+          value: term.input ? child : null,
           type: term.input ? term.type : null,
           placeholder: term.input ? term.placeholder : null,
           disabled: term.input && term.disabled ? true : false,

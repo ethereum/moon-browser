@@ -19,9 +19,6 @@ module.exports = (self, program, baseState, path, yell) => {
     "get": key => {
       const liveState = self.state.appState[path.join("/")] || {};
       return Promise.resolve(liveState[key] === undefined ? baseState[key] : liveState[key]);
-      //const realState = (liveState === undefined ? baseState : liveState) || {};
-      //console.log("get", JSON.stringify([baseState, liveState]));
-      //return Promise.resolve(realState[key]);
     },
 
     // Interacts with the Ethereum network
