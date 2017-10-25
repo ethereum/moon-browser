@@ -246,6 +246,7 @@ module.exports = createClass({
   // Browsing
   goForward() {
     // TODO
+    alert("(Soon.)");
   },
 
   toggleMode() {
@@ -254,6 +255,7 @@ module.exports = createClass({
 
   downloadApp() {
     // TODO
+    alert("(Soon.)");
   },
 
   toggleShowAccountList() {

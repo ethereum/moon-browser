@@ -38,6 +38,7 @@ const Button = (props) => {
 
 const Account = (props) => {
   return <div
+    key={props.key}
     style={{
       cursor: "pointer",
       whiteSpace: "nowrap",
@@ -120,6 +121,7 @@ module.exports = createClass({
       <div>
         {this.props.accounts.map(account =>
           <Account
+            key={account.address}
             onClick={() => this.props.onSelectAccount(account.address)}
             account={account}/>
         )}
