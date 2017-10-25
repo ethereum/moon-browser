@@ -176,7 +176,8 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
             borderRadius: term.radius ? term.radius+"px" : null,
             background: debug
               ? "rgb("+(200+RNG(55))+","+(200+RNG(55))+","+(200+RNG(55))+")"
-              : term.background
+              : term.background,
+            backgroundSize: "cover"
           },
           onKeyPress: makeEvent(key, "onKeyPress"),
           onKeyUp: makeEvent(key, "onKeyUp"),
