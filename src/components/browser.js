@@ -25,7 +25,7 @@ module.exports = createClass({
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
     this.homeAppCid = "zb2rhXudqtquvfHW9adTweBM6Q4BJ57UwjC82xnux7EuGHfPg";
-    this.walletAppCid = "zb2rhbYfK1i4xsQ9ReNPx8ao9BeZxnPF2X7a3DTCWgn3eBa33";
+    this.walletAppCid = "zb2rhX4JBE6dE2SRNK4rKuJLvCqVc3u8dbDdS48nErLHoS5HD";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
