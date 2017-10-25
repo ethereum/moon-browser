@@ -31,7 +31,7 @@ module.exports = createClass({
   },
   edit() {
     this.colorTree.style.display = "none";
-    this.blackTree.style["-webkit-text-fill-color"] = "rgb(32,36,37)";
+    this.blackTree.style["-webkit-text-fill-color"] = "rgb(128,128,128)";
   },
   stopEditing() {
     this.setState({code: this.blackTree.innerText});
@@ -51,13 +51,17 @@ module.exports = createClass({
       }
     };
     var textColors = {
-      ":": "rgb(215,58,73)",
-      "{": "rgb(215,58,73)",
-      "}": "rgb(215,58,73)",
-      "[": "rgb(215,58,73)",
-      "]": "rgb(215,58,73)",
+      ":": "rgb(73,58,215)",
+      "{": "rgb(73,58,215)",
+      "}": "rgb(73,58,215)",
+      "[": "rgb(73,58,215)",
+      "]": "rgb(73,58,215)",
       "(": "#6f42c1",
-      ")": "#6f42c1"
+      ")": "#6f42c1",
+      ">": "rgb(73,58,215)",
+      "<": "rgb(73,58,215)",
+      "=": "rgb(73,58,215)",
+      "=>": "rgb(73,58,215)"
     };
     var formatted = MoonSyntax.termFormatter({
       indent: 1,
@@ -65,11 +69,11 @@ module.exports = createClass({
       Many: (els) => span(null, 0, els),
       Text: (text) => span(textColors[text], 0, text),
       Line: (tabs, line) => span(null, 0, [repeat(tabs, "  "), line, "\n"]),
-      Var: (name) => span("#6f42c1", 0, name),
+      Var: (name) => span("#63687f", 0, name),
       Ref: (name) => span("rgb(3,102,214)", 1, name),
       Key: (key) => span("#647f68", 0, key),
-      Str: (str) => span("#96945d", 0, str),
-      Pri: (pri) => span("#7c5827", 0, pri),
+      Str: (str) => span("#7f637b", 0, str),
+      Pri: (pri) => span("#7f7c63", 0, pri),
       Num: (num) => span("rgb(0,92,197)", 0, num)
     })(term);
     var element = document.createElement("span");
