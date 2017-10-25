@@ -24,8 +24,8 @@ module.exports = createClass({
     this.activeAppData = {};
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
-    this.homeAppCid = "zb2rhmqj5QpYzhL3DXGBfJDMrX1cwmNHh6SQ7zbgachqenNqp";
-    this.walletAppCid = "zb2rhj6n8nLCBXYSvdgxUQb5c1uBDcMv8EKiRSKwLRCyXjfit";
+    this.homeAppCid = "zb2rhcir5QeUuaFMpg2xpV6yLRTez7S8yApQhFKKc5cJfFe3L";
+    this.walletAppCid = "zb2rhiWFjh2KSTwkSfKHn5EuGapW51u3WRdFm5QYLgpHFV9zZ";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
@@ -422,7 +422,6 @@ module.exports = createClass({
       overflowX: "hidden",
       height: "70px",
       background: titleBackground,
-      borderTop: "1px solid rgb(222,222,222)",
       textAlign: "center"
     };
     const topBar = <div className="topBar" style={topBarStyle}>
@@ -432,7 +431,7 @@ module.exports = createClass({
       {titleUrlBar}
       {userAvatar}
       {editButton}
-      {downloadButton}
+      {/*downloadButton*/}
     </div>;
 
     // Contents, where the app/editor is displayed

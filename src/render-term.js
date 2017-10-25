@@ -139,6 +139,7 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
       
       const value = render(term.value, newEnv);
 
+      ++RENDERED_NODES;
       var vNode = Inferno.createVNode(2,
         term.input ? "input" : "div",
         term.selectable ? "selectable" : "unselectable",
@@ -202,12 +203,23 @@ module.exports = (term, path, size, appState, address, performIO, debug) => {
         {Moon.stringify(term)}
       </pre>;
     }
-    return render(term, {
+    var START_TIME = Date.now();
+    var RENDERED_NODES = 0;
+    const result = render(term, {
       path: path,
       size: size,
       yell: _ => performIO(do_ => do_("stop")),
       address: address
     });
+    console.log
+      ( "-> rendered "
+      + RENDERED_NODES
+      + " nodes of "
+      + term.name
+      + " in "
+      + (Date.now() - START_TIME) / 1000
+      + "s");
+    return result;
   } catch (e) {
     console.log(e);
     return "Not renderable.";
