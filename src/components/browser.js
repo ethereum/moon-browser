@@ -24,8 +24,8 @@ module.exports = createClass({
     this.activeAppData = {};
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
-    this.homeAppCid = "zb2rhiX8cz5hBzicCcWvaA23DhSwhz1tsaYMdueuCLQL9osPM";
-    this.walletAppCid = "zb2rhf8FzbA1iyTBi5ZJBEKp6zUH611KLHtjYrnGgMZNdx9Ju";
+    this.homeAppCid = "zb2rhXudqtquvfHW9adTweBM6Q4BJ57UwjC82xnux7EuGHfPg";
+    this.walletAppCid = "zb2rhbYfK1i4xsQ9ReNPx8ao9BeZxnPF2X7a3DTCWgn3eBa33";
 
     window.acc = pvt => {
       const acc = Eth.account.fromPrivate(pvt);
@@ -283,6 +283,11 @@ module.exports = createClass({
     const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + 2 * appBackground[1] + appBackground[2]) < 255);
     const buttonColor = isDarkTitleBar ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
     const buttonShadows = isDarkTitleBar ? "rgba(0, 0, 0, 0.5) 0 -1px 0" : "rgba(255, 255, 255, 0.5) 0 1px 0";
+
+    // FIXME: hash to avoid the blur's shadowed border when using the account modal
+    if (document.getElementById("main")) {
+      document.getElementById("main").style.background = titleBackground;
+    }
 
     // The DApp title
     const title = <span style={{
