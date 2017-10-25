@@ -24,7 +24,7 @@ module.exports = createClass({
     this.activeAppData = {};
     this.activeAppDataNonce = 0;
     this.localDataKey = "mist-lite-data";
-    this.homeAppCid = "zb2rhd6Ni5sftbGZfKXJUUAEXbog6iSUpL4nmPrB8m99u8q73";
+    this.homeAppCid = "zb2rhZwAxTbxkX2fwVDCeFBxRcTUYtce9LrBJJ9YCACq2eaJ4";
     this.walletAppCid = "zb2rhbFRV5LDxgSuVbwFdcPSLCaa1JfUn4GcQcXqLvdU7zELq";
 
     window.acc = pvt => {
@@ -278,7 +278,7 @@ module.exports = createClass({
     const canGoBack = this.state.activeAppHistory.length <= 1;
 
     // Get appropriate colors
-    const appBackground = (((this.activeAppData||{}).term||{}).title||{}).background || [241,241,241];
+    const appBackground = ((((this.activeAppData||{}).term||{}).title||{}).background||"rgb(241,241,241)").slice(4,-1).split(",").map(Number);
     const titleBackground = typeof appBackground == "object" ? "rgb(" + [].join.call(appBackground,",") + ")" : "#f1f1f1";
     const isDarkTitleBar = (typeof appBackground == "object" && appBackground.length == 3 && (2 * appBackground[0] + 2 * appBackground[1] + appBackground[2]) < 255);
     const buttonColor = isDarkTitleBar ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";

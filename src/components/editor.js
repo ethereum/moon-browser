@@ -10,6 +10,14 @@ module.exports = createClass({
   },
   componentDidMount() {
     this.renderCode();
+    //this.scrollAdjuster = setInterval(() => {
+      //if (this.colorTree && this.blackTree) {
+        //this.colorTree.scrollTop = this.blackTree.scrollTop;
+      //}
+    //}, 200);
+  },
+  componentWillUnmount() {
+    //clearInterval(this.scrollAdjuster);
   },
   componentWillReceiveProps(nextProps) {
     const changed = this.state.code !== nextProps.code;
