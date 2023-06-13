@@ -1,3 +1,6 @@
+# Archival Notice
+This repository is archived. Please check out https://ethereum.org/en/dapps/ to learn more about Dapps.
+
 ## Moon-Browser
 
 A browser implementation of the Moon Engine: an ultra-lightweight, formally verified kernel for decentralized applications (DApps). 
